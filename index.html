@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>俄罗斯方块</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div id="start-screen" class="overlay">
+    <div class="overlay-content">
+      <h1 class="game-title">TETRIS</h1>
+      <div class="hi-row"><span>最高分</span><span id="start-best">0</span></div>
+      <div class="mode-btns">
+        <button class="mode-btn" id="btn-single">&#128100; 单人游戏</button>
+        <button class="mode-btn primary" id="btn-battle">&#129302; 对战 AI</button>
+      </div>
+      <div class="controls-hint"><div>&#8592; &#8594; 移动 &nbsp; &#8593;/X 顺转 &nbsp; Z 逆转</div><div>&#8595; 软降 &nbsp; 空格 硬降 &nbsp; C 保留 &nbsp; P 暂停</div></div>
+    </div>
+  </div>
+  <div id="pause-screen" class="overlay hidden">
+    <div class="overlay-content">
+      <h2>暂 停</h2><p class="hint">按 P 或 Esc 继续</p>
+      <button class="mode-btn" id="pause-menu-btn" style="margin-top:16px">&#8617; 主菜单</button>
+    </div>
+  </div>
+  <div id="gameover-screen" class="overlay hidden">
+    <div class="overlay-content">
+      <h2>GAME OVER</h2>
+      <div class="score-display">
+        <div class="sd-row"><span>得分</span><span id="final-score">0</span></div>
+        <div class="sd-row"><span>最高分</span><span id="final-best">0</span></div>
+      </div>
+      <div class="mode-btns"><button class="mode-btn primary" id="go-retry">再来一局</button><button class="mode-btn" id="go-menu">主菜单</button></div>
+    </div>
+  </div>
+  <div id="result-screen" class="overlay hidden">
+    <div class="overlay-content">
+      <h2 id="result-title">胜利!</h2>
+      <div id="result-stats" class="score-display"></div>
+      <div class="mode-btns"><button class="mode-btn primary" id="result-retry">再来一局</button><button class="mode-btn" id="result-menu">主菜单</button></div>
+    </div>
+  </div>
+  <div id="keybind-screen" class="overlay hidden">
+    <div class="overlay-content kb-overlay">
+      <h2 class="kb-title">&#9881; 按键设置</h2>
+      <div id="kb-list"></div>
+      <div class="kb-footer"><button id="kb-reset">恢复默认</button><button id="kb-done">&#10003; 完成</button></div>
+    </div>
+  </div>
+  <div id="single-wrapper" class="hidden">
+    <div class="side-panel left-panel">
+      <div class="panel-block"><div class="panel-label">HOLD</div><canvas id="s-hold" width="120" height="120"></canvas></div>
+      <div class="panel-block info-block">
+        <div class="info-item"><div class="info-label">SCORE</div><div class="info-value" id="s-score">0</div></div>
+        <div class="info-item"><div class="info-label">BEST</div><div class="info-value" id="s-best">0</div></div>
+        <div class="info-item"><div class="info-label">LEVEL</div><div class="info-value" id="s-level">1</div></div>
+        <div class="info-item"><div class="info-label">LINES</div><div class="info-value" id="s-lines">0</div></div>
+      </div>
+    </div>
+    <div class="board-wrap" id="s-board"><canvas id="s-canvas" width="300" height="600"></canvas><div class="attack-notif" id="notif-s"></div></div>
+    <div class="side-panel right-panel"><div class="panel-block"><div class="panel-label">NEXT</div><canvas id="s-next" width="120" height="360"></canvas></div></div>
+  </div>
+  <div id="battle-wrapper" class="hidden">
+    <div class="b-side">
+      <div class="b-panel">
+        <div class="panel-label">HOLD</div><canvas id="b-hold-p1" width="100" height="100"></canvas>
+        <div class="b-stats">
+          <div class="info-item"><div class="info-label">SCORE</div><div class="info-value" id="b-score-p1">0</div></div>
+          <div class="info-item"><div class="info-label">LINES</div><div class="info-value" id="b-lines-p1">0</div></div>
+        </div>
+        <div class="player-tag-box">YOU</div>
+      </div>
+      <div class="board-wrap b-board" id="b-board-p1"><canvas id="b-canvas-p1" width="300" height="600"></canvas><div class="garbage-bar" id="gbar-p1"></div><div class="attack-notif" id="notif-p1"></div></div>
+      <div class="b-panel"><div class="panel-label">NEXT</div><canvas id="b-next-p1" width="100" height="300"></canvas></div>
+    </div>
+    <div id="vs-panel">
+      <div class="vs-label">VS</div>
+      <div id="atk-p1" class="atk-col"></div>
+      <div class="vs-spacer"></div>
+      <div id="atk-p2" class="atk-col"></div>
+    </div>
+    <div class="b-side">
+      <div class="b-panel"><div class="panel-label">NEXT</div><canvas id="b-next-p2" width="100" height="300"></canvas></div>
+      <div class="board-wrap b-board" id="b-board-p2"><div class="garbage-bar left-bar" id="gbar-p2"></div><canvas id="b-canvas-p2" width="300" height="600"></canvas><div class="attack-notif" id="notif-p2"></div></div>
+      <div class="b-panel">
+        <div class="panel-label">HOLD</div><canvas id="b-hold-p2" width="100" height="100"></canvas>
+        <div class="b-stats">
+          <div class="info-item"><div class="info-label">SCORE</div><div class="info-value" id="b-score-p2">0</div></div>
+          <div class="info-item"><div class="info-label">LINES</div><div class="info-value" id="b-lines-p2">0</div></div>
+        </div>
+        <div class="player-tag-box ai-tag">AI</div>
+      </div>
+    </div>
+  </div>
+  <div id="mobile-controls">
+    <div class="mobile-row">
+      <button class="mob-btn" id="btn-hold">HOLD</button>
+      <button class="mob-btn" id="btn-ccw">&#8630;</button>
+      <button class="mob-btn" id="btn-cw">&#8631;</button>
+      <button class="mob-btn" id="btn-drop">&#8659;&#8659;</button>
+    </div>
+    <div class="mobile-row">
+      <button class="mob-btn large" id="btn-left">&#9664;</button>
+      <button class="mob-btn large" id="btn-down">&#9660;</button>
+      <button class="mob-btn large" id="btn-right">&#9654;</button>
+    </div>
+  </div>
+  <button id="settings-btn" title="按键设置">&#9881;</button>
+  <script src="tetris.js"></script>
+</body></html>
